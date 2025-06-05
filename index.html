@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Polícia Civil DEIC</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Topo com degrade preto->branco */
+    header {
+      width: 100%;
+      background: linear-gradient(90deg, #000000, #1d1c1c);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 15px 30px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    header img {
+      height: 60px;
+      width: auto;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff; /* branco sólido */
+      background: none;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: unset;
+    }
+
+    main {
+      padding: 40px 20px;
+      width: 100%;
+      max-width: 900px;
+      background: #fff;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    /* Cards das categorias */
+    .categoria-card {
+      background: #f8f8f8;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 280px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .categoria-nome {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #222;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .categoria-descricao {
+      flex-grow: 1;
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 20px;
+      text-align: center;
+      min-height: 80px;
+    }
+
+    .categoria-botao {
+      background-color: #666666;
+      border: none;
+      padding: 12px 0;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+
+    .categoria-botao:hover {
+      background-color: #444444;
+    }
+
+    /* Responsividade simples */
+    @media (max-width: 600px) {
+      main {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .categoria-card {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bras%C3%A3o_Nacional_PCSP.png"
+      alt="Logo Polícia Civil"
+    />
+    <h1>Polícia Civíl - DEIC</h1>
+  </header>
+
+  <main>
+    <article class="categoria-card">
+      <div class="categoria-nome">Investigação Armamentos</div>
+      <div class="categoria-descricao">
+        Registre aqui investigações envolvendo armamentos e seus componentes.
+      </div>
+      <a href="produtos/armamentos.html" class="categoria-botao">Registrar</a>
+    </article>
+
+    <article class="categoria-card">
+      <div class="categoria-nome">Investigação Cibernética</div>
+      <div class="categoria-descricao">
+        Registre aqui investigações envolvendo crimes cibernéticos.
+      </div>
+      <a href="produtos/ciberneticos.html" class="categoria-botao">Registrar</a>
+    </article>
+
+    <article class="categoria-card">
+      <div class="categoria-nome">Investigação Logística Criminosa</div>
+      <div class="categoria-descricao">
+        Registre aqui investigações envolvendo um grupo criminoso.
+      </div>
+      <a href="produtos/mapeamento.html" class="categoria-botao">Registrar</a>
+    </article>
+
+    <article class="categoria-card">
+      <div class="categoria-nome">MBA</div>
+      <div class="categoria-descricao">
+        Registrar mandados de busca e apreensão.
+      </div>
+      <a href="produtos/mba.html" class="categoria-botao">Registrar</a>
+    </article>
+  </main>
+</body>
+</html>

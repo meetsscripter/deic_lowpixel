@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modelo Alvará Polícia Civil - Preenchível</title>
+  <style>
+    body {
+      background: #070707;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      padding: 30px;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      min-height: 100vh;
+      margin: 0;
+      flex-wrap: wrap;
+    }
+
+    .form-container {
+      width: 380px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+      height: fit-content;
+      box-sizing: border-box;
+      margin-bottom: 30px;
+    }
+
+    .form-container h2 {
+      font-family: Georgia, serif;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #222;
+      user-select: none;
+    }
+
+    input[type="text"], input[type="tel"], input[type="date"], select {
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 6px;
+      font-size: 15px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      font-family: Verdana, sans-serif;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus, input[type="tel"]:focus, input[type="date"]:focus, select:focus {
+      border-color: #0077cc;
+      outline: none;
+    }
+
+    /* Para os dois campos lado a lado na assinatura */
+    .linha-assinatura {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .linha-assinatura > div {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Alvará container */
+    .alvara {
+      width: 800px;
+      background: white;
+      padding: 40px;
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 1000px; /* altura da folha */
+      font-family: Verdana, sans-serif;
+      color: #000;
+      box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+    }
+
+    /* Imagens dos cantos */
+    .logo-esq {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 100px;
+      height: auto;
+    }
+
+    .logo-dir {
+      position: absolute;
+      top: 50px;
+      right: 30px;
+      width: 100px;
+      height: auto;
+    }
+
+    /* Novo cabeçalho centralizado no topo */
+    .novo-cabecalho {
+      text-align: center;
+      margin-bottom: 40px;
+      user-select: none;
+      margin-top: 20px;
+      line-height: 1.2;
+      font-weight: bold;
+      color: #111;
+      font-family: 'Georgia', serif;
+      /* Fonte mais atrativa e maior */
+      font-size: 15px;
+      font-variant: small-caps;
+      letter-spacing: 1.5px;
+      text-shadow: 1px 1px 1px #bbb;
+    }
+
+    .novo-cabecalho p {
+      margin: 6px 0;
+    }
+
+    .novo-cabecalho .titulo {
+      font-size: 25px;
+      margin-top: 12px;
+      letter-spacing: 3px;
+      color: #222;
+    }
+
+    /* Linhas de perguntas e respostas */
+    .linha {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+      flex-wrap: nowrap;
+    }
+
+    .bloco {
+      flex: 1;
+      min-width: 150px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pergunta {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .resposta {
+      font-size: 16px;
+      color: #111;
+      min-height: 24px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .observacoes {
+      text-align: justify;
+      margin-top: 20px;
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: normal; /* texto normal */
+      color: #222;
+      user-select: none;
+      border-top: 1px solid #ccc;
+      padding-top: 15px;
+      font-family: Verdana, sans-serif;
+    }
+
+    .observacoes strong:nth-of-type(2) {
+      display: block;
+      margin-top: 25px; /* espaço maior antes do "ATENÇÃO" */
+      font-weight: bold;
+      font-family: Georgia, serif;
+      text-align: left;
+    }
+
+        #mensagem.negado {
+        color: red;
+        font-weight: bold;
+        }
+
+
+
+    .observacoes span {
+      display: block;
+      margin-top: 8px; /* espaço pequeno entre o título e o texto */
+      line-height: 1.4;
+      font-weight: normal;
+    }
+
+    .observacoes p {
+      margin-bottom: 15px;
+    }
+
+        @font-face {
+        font-family: 'Andrea Bellarosa';
+        src: url('font/Andrea Bellarosa.ttf') format('truetype');
+        }
+
+
+    .error-message {
+        color: #e74c3c;
+        font-weight: 600;
+        display: none;
+    }
+
+    /* Assinatura fixada no fim da folha, centralizada */
+    .assinatura-container {
+      margin-top: auto; /* empurra para baixo */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-top: 40px;
+      font-size: 18px;
+      font-weight: bold;
+      border-top: 1px solid #999;
+      user-select: none;
+      font-family: Georgia, serif;
+    }
+
+    /* Fonte cursiva para assinatura f*/
+    .assinatura-fonte {
+      font-family: "Segoe Script", "WindSong", "Lucida Handwriting", cursive;
+      font-size: 28px;
+      font-weight: normal;
+      margin-bottom: 6px;
+      user-select: none;
+    }
+
+
+    /* Botão para gerar imagem */
+    #btn-gerar {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 25px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    #btn-gerar:hover {
+      background: #005fa3;
+    }
+
+    /* Container para imagem gerada */
+    #imagem-gerada {
+      margin-top: 30px;
+      text-align: center;
+    }
+    #imagem-gerada img {
+      max-width: 800px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 8px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+
+    <div id="formulario">
+        <input type="text" id="codigo" placeholder="Digite o código para liberar a edição">
+        <button onclick="verificarCodigo()">Verificar</button>
+        <div id="mensagem"></div>
+      </div>
+  
+  <div class="form-container" id="formContainer" style="display: none;">
+    <h2>Preencha os dados do Alvará</h2>
+
+    <label for="proprietario">Proprietário:</label>
+    <input type="text" id="proprietario" placeholder="Nome do proprietário" />
+
+    <label for="rg">RG:</label>
+    <input type="text" id="rg" placeholder="Número do RG" />
+
+    <label for="telefone">Telefone:</label>
+    <input type="tel" id="telefone" placeholder="(xx) xxxx-xxxx" />
+
+    <label for="atividade">Atividade:</label>
+    <input type="text" id="atividade" placeholder="Atividade comercial" />
+
+    <label for="endereco">Endereço:</label>
+    <input type="text" id="endereco" placeholder="Endereço completo" />
+
+    <label for="data">Data:</label>
+    <input type="date" id="data" />
+
+    <label for="validade">Validade:</label>
+    <input type="date" id="validade" />
+
+    <!-- Linha para assinatura -->
+    <div class="linha-assinatura">
+      <div>
+        <label for="nome-assinatura">Nome para assinatura:</label>
+        <input type="text" id="nome-assinatura" placeholder="Nome completo para assinatura" />
+      </div>
+      <div>
+        <label for="fonte-assinatura">Fonte da assinatura:</label>
+        <select id="fonte-assinatura">
+          <option value='"Segoe Script", "Lucida Handwriting", cursive'>Cursiva (Padrão)</option>
+          <option value='"Brush Script MT", cursive'>Brush Script</option>
+          <option value='"Dancing Script", cursive'>Dancing Script</option>
+          <option value='"Pacifico", cursive'>Pacifico</option>
+          <option value='"Great Vibes", cursive'>Great Vibes</option>
+            <option value="'Andrea Bellarosa'" style="font-family: 'Andrea Bellarosa';">Fonte Personalizada</option>
+
+        </select>
+      </div>
+    </div>
+
+    <button id="btn-gerar">Gerar Imagem</button>
+</div>
+  <div class="alvara" id="alvara">
+
+    <!-- Logos nos cantos -->
+    <img src="https://i.imgur.com/szMlN2v.png" alt="Logo Esquerda" class="logo-esq" />
+    <img src="https://i.imgur.com/FWgPSPg.png" alt="Logo Direita" class="logo-dir" />
+
+    <!-- Novo cabeçalho centralizado no topo -->
+    <div class="novo-cabecalho">
+      <p>SECRETÁRIA DE SEGURANÇA PÚBLICA</p>
+      <p>DEPARTAMENTO DE POLÍCIA DO LOWPIXEL</p>
+      <p class="titulo">ALVARÁ DE FUNCIONAMENTO</p>
+    </div>
+
+    <!-- Conteúdo com perguntas e respostas -->
+    <div class="linha">
+      <div class="bloco">
+        <div class="pergunta">PROPRIETÁRIO:</div>
+        <div class="resposta" id="res-proprietario">Lindomarjackson</div>
+      </div>
+      <div class="bloco">
+        <div class="pergunta">RG:</div>
+        <div class="resposta" id="res-rg">12.345.678-9</div>
+      </div>
+      <div class="bloco">
+        <div class="pergunta">TELEFONE:</div>
+        <div class="resposta" id="res-telefone">(11) 98765-4321</div>
+      </div>
+      <div class="bloco">
+        <div class="pergunta">ATIVIDADE:</div>
+        <div class="resposta" id="res-atividade">Comércio de alimentos</div>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="bloco">
+        <div class="pergunta">ENDEREÇO:</div>
+        <div class="resposta" id="res-endereco">Rua das Flores, 123</div>
+      </div>
+      <div class="bloco">
+        <div class="pergunta">DATA:</div>
+        <div class="resposta" id="res-data">04/06/2025</div>
+      </div>
+      <div class="bloco">
+        <div class="pergunta">VALIDADE:</div>
+        <div class="resposta" id="res-validade">Até 04/06/2026</div>
+      </div>
+      <div class="bloco">
+        <div class="pergunta">---</div>
+        <div class="resposta">&nbsp;</div>
+      </div>
+    </div>
+
+    <!-- Observações e Atenção -->
+    <div class="observacoes">
+      <strong>OBSERVAÇÕES</strong>
+        <p>1. NÃO PODERÁ POSSUIR PASSAGENS CRIMINAIS;</p>
+        <p>2. LOCAL ONDE PRETENDE TER O ESTABELECIMENTO DEVERÁ CUMPRIR COM TODAS AS NORMAS DE SEGURANÇA PARA O FUNCIONAMENTO DO MESMO, ONDE A EQUIPE POLICIAL IRÁ ATÉ O LOCAL PARA CONFERIR SE TUDO ESTÁ DE ACORDO COM AS NORMAS DE SEGURANÇA;</p>
+        <p>3. O DONO QUE FOR EMITIR O ALVARÁ PRECISARÁ ESTAR MUNIDO DE ALGUNS DOCUMENTOS, SENDO ESSES: LOCALIZAÇÃO DO LOCAL, QUANTIDADE DE FUNCIONÁRIOS, ESPECIFICAÇÕES DO QUE SERÁ A EMPRESA E O NOME DA EMPRESA;</p>
+        <p>4. APÓS A EMISSÃO DO ALVARÁ, A POLÍCIA PODE IR ATÉ O LOCAL A QUALQUER MOMENTO PARA FISCALIZAR O AMBIENTE, A FIM DE PREVENIR POSSÍVEIS CRIMES NO LOCAL;</p>
+        <p>5. PAGAR UMA TAXA R$80.000,00 PARA A EMISSÃO DO DOCUMENTO QUE TEM UMA VALIDADE DE 30 DIAS, APÓS ESSE PERÍODO TERÁ QUE SER PAGA A TAXA NOVAMENTE PARA MANTER O ESTABELECIMENTO LEGALIZADO;</p>
+
+      <strong>ATENÇÃO:</strong>
+      <span>Este alvará é pessoal e intransferível, devendo estar disponível para inspeção a qualquer momento.</span>
+    </div>
+
+    <!-- Assinatura no final -->
+    <div class="assinatura-container">
+      <div class="assinatura-fonte" id="assinatura-texto">________________________</div>
+      <div>Assinatura do Proprietário</div>
+    </div>
+
+  <!-- Container para a imagem gerada -->
+  <div id="imagem-gerada"></div>
+</div>
+  <!-- Biblioteca para screenshot -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    const btnGerar = document.getElementById('btn-gerar');
+    const alvara = document.getElementById('alvara');
+    const imagemGerada = document.getElementById('imagem-gerada');
+
+    // Inputs e áreas para resposta
+    const inputs = {
+      proprietario: document.getElementById('proprietario'),
+      rg: document.getElementById('rg'),
+      telefone: document.getElementById('telefone'),
+      atividade: document.getElementById('atividade'),
+      endereco: document.getElementById('endereco'),
+      data: document.getElementById('data'),
+      validade: document.getElementById('validade'),
+      nomeAssinatura: document.getElementById('nome-assinatura'),
+      fonteAssinatura: document.getElementById('fonte-assinatura'),
+    };
+
+let codigosLiberados = {};
+
+// 🔻 Variáveis globais para armazenar os dados do usuário
+let discord = '';       // Variável para armazenar o nome do usuário
+let nomeCompleto = '';  // Variável para armazenar o nome completo
+
+async function carregarCodigos() {
+  try {
+    const response = await fetch('codes.json');
+    if (!response.ok) throw new Error("Erro ao carregar codes.json");
+    codigosLiberados = await response.json();
+  } catch (error) {
+    console.error("Erro:", error);
+  }
+}
+
+async function verificarCodigo() {
+  const codigo = document.getElementById("codigo").value.trim();
+  const mensagemDiv = document.getElementById("mensagem");
+  const conteudo = document.getElementById("formContainer");
+  const formulario = document.getElementById("formulario");
+  const infoUsuario = document.getElementById("infoUsuario");
+  const paginaAtual = window.location.pathname.split("/").pop();
+
+  // Código usado pode ser local, pois é só para exibição
+  const codigoUsado = codigo;
+
+  const dados = codigosLiberados[codigo];
+
+  if (!dados) {
+    mensagemDiv.textContent = "Código inválido.";
+    mensagemDiv.className = "negado";
+    conteudo.style.display = "none";
+  } else if (!dados.pages.includes(paginaAtual)) {
+    mensagemDiv.textContent = `Acesso Negado para esta página `;
+    mensagemDiv.className = "negado";
+    conteudo.style.display = "none";
+  } else {
+    // ✅ Preenche as variáveis globais
+    nomeCompleto = dados.nomeCompleto;
+    discord = dados.discord;
+
+    mensagemDiv.textContent = `Acesso Liberado!`;
+    mensagemDiv.className = "liberado";
+    formulario.style.display = "none";
+    conteudo.style.display = "block";
+  }
+
+  document.getElementById("codigo").value = "";
+}
+
+carregarCodigos();
+
+    const respostas = {
+      proprietario: document.getElementById('res-proprietario'),
+      rg: document.getElementById('res-rg'),
+      telefone: document.getElementById('res-telefone'),
+      atividade: document.getElementById('res-atividade'),
+      endereco: document.getElementById('res-endereco'),
+      data: document.getElementById('res-data'),
+      validade: document.getElementById('res-validade'),
+      assinaturaTexto: document.getElementById('assinatura-texto'),
+    };
+
+    // Atualiza respostas no alvará em tempo real
+    Object.keys(inputs).forEach(key => {
+      inputs[key].addEventListener('input', () => {
+        switch(key) {
+          case 'validade':
+            respostas.validade.textContent = inputs.validade.value ? 'Até ' + formatDate(inputs.validade.value) : '';
+            break;
+          case 'data':
+            respostas.data.textContent = inputs.data.value ? formatDate(inputs.data.value) : '';
+            break;
+          case 'nomeAssinatura':
+            respostas.assinaturaTexto.textContent = inputs.nomeAssinatura.value || ' ';
+            break;
+          case 'fonteAssinatura':
+            respostas.assinaturaTexto.style.fontFamily = inputs.fonteAssinatura.value;
+            break;
+          default:
+            if(respostas[key]) respostas[key].textContent = inputs[key].value;
+        }
+      });
+    });
+
+    // Formata data YYYY-MM-DD para DD/MM/YYYY
+    function formatDate(data) {
+      const d = new Date(data);
+      if(isNaN(d)) return '';
+      return ('0' + d.getDate()).slice(-2) + '/' + ('0'+(d.getMonth()+1)).slice(-2) + '/' + d.getFullYear();
+    }
+
+    // Evento botão gerar imagem
+    btnGerar.addEventListener('click', () => {
+      imagemGerada.innerHTML = 'Gerando imagem, aguarde...';
+
+html2canvas(alvara, {
+  scale: 2,
+  useCORS: true
+}).then(canvas => {
+  imagemGerada.innerHTML = '';
+
+  const img = document.createElement('img');
+  img.src = canvas.toDataURL('image/png');
+  img.alt = 'Imagem do Alvará Gerada';
+  img.style.cursor = 'pointer';
+  img.title = 'Clique para copiar a imagem';
+
+  img.onclick = () => {
+    canvas.toBlob(blob => {
+      navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ]).then(() => {
+        alert('Imagem copiada para a área de transferência!');
+      }).catch(() => {
+        alert('Não foi possível copiar a imagem automaticamente. Use o botão direito para salvar.');
+      });
+    });
+  };
+
+  imagemGerada.appendChild(img);
+}).catch(err => {
+        imagemGerada.innerHTML = 'Erro ao gerar imagem: ' + err.message;
+      });
+    });
+  </script>
+</body>
+</html>
