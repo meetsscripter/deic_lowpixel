@@ -277,12 +277,6 @@
 </head>
 <body>
 
-    <div id="formulario">
-        <input type="text" id="codigo" placeholder="Digite o código para liberar a edição">
-        <button onclick="verificarCodigo()">Verificar</button>
-        <div id="mensagem"></div>
-      </div>
-  
   <div class="form-container" id="formContainer" style="display: none;">
     <h2>Preencha os dados do Alvará</h2>
 
@@ -423,59 +417,6 @@
       nomeAssinatura: document.getElementById('nome-assinatura'),
       fonteAssinatura: document.getElementById('fonte-assinatura'),
     };
-
-let codigosLiberados = {};
-
-// 🔻 Variáveis globais para armazenar os dados do usuário
-let discord = '';       // Variável para armazenar o nome do usuário
-let nomeCompleto = '';  // Variável para armazenar o nome completo
-
-async function carregarCodigos() {
-  try {
-    const response = await fetch('codes.json');
-    if (!response.ok) throw new Error("Erro ao carregar codes.json");
-    codigosLiberados = await response.json();
-  } catch (error) {
-    console.error("Erro:", error);
-  }
-}
-
-async function verificarCodigo() {
-  const codigo = document.getElementById("codigo").value.trim();
-  const mensagemDiv = document.getElementById("mensagem");
-  const conteudo = document.getElementById("formContainer");
-  const formulario = document.getElementById("formulario");
-  const infoUsuario = document.getElementById("infoUsuario");
-  const paginaAtual = window.location.pathname.split("/").pop();
-
-  // Código usado pode ser local, pois é só para exibição
-  const codigoUsado = codigo;
-
-  const dados = codigosLiberados[codigo];
-
-  if (!dados) {
-    mensagemDiv.textContent = "Código inválido.";
-    mensagemDiv.className = "negado";
-    conteudo.style.display = "none";
-  } else if (!dados.pages.includes(paginaAtual)) {
-    mensagemDiv.textContent = `Acesso Negado para esta página `;
-    mensagemDiv.className = "negado";
-    conteudo.style.display = "none";
-  } else {
-    // ✅ Preenche as variáveis globais
-    nomeCompleto = dados.nomeCompleto;
-    discord = dados.discord;
-
-    mensagemDiv.textContent = `Acesso Liberado!`;
-    mensagemDiv.className = "liberado";
-    formulario.style.display = "none";
-    conteudo.style.display = "block";
-  }
-
-  document.getElementById("codigo").value = "";
-}
-
-carregarCodigos();
 
     const respostas = {
       proprietario: document.getElementById('res-proprietario'),
