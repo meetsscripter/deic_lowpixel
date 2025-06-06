@@ -186,10 +186,13 @@
 
     <label for="quantidade">Quantidade:</label>
     <input type="number" id="quantidade" min="1" />
-
     <button class="add-btn" onclick="adicionarItem()">Adicionar Item</button>
-
     <div class="item-list" id="listaItens"></div>
+
+    <label for="agente">Agentes participantes:</label>
+    <input type="text" id="agente" autocomplete="off" />
+    <button class="add-btn" onclick="adicionarAgente()">Adicionar Agente</button>
+    <div class="item-list" id="listaAgentes"></div>
 
     <button class="generate-btn" onclick="gerarMensagem()">Gerar Mensagem</button>
 
@@ -201,18 +204,24 @@
 
   <script>
     const itens = [];
+    const agentes = [];
 
     function adicionarItem() {
       const item = document.getElementById('item').value;
-      const quantidade = document.getElementById('quantidade').value;
+      const quantidade = parseInt(document.getElementById('quantidade').value);
       if (!item || !quantidade) {
         alert('Selecione um item e defina a quantidade.');
         return;
       }
 
-      itens.push({ item, quantidade });
-      atualizarLista();
+      const indexExistente = itens.findIndex(i => i.item === item);
+      if (indexExistente !== -1) {
+        itens[indexExistente].quantidade += quantidade;
+      } else {
+        itens.push({ item, quantidade });
+      }
 
+      atualizarLista();
       document.getElementById('item').value = '';
       document.getElementById('quantidade').value = '';
     }
@@ -229,6 +238,33 @@
         const div = document.createElement('div');
         div.className = 'item-entry';
         div.innerHTML = `<span>${entry.item} x${entry.quantidade}</span><button onclick="removerItem(${index})">X</button>`;
+        lista.appendChild(div);
+      });
+    }
+
+    function adicionarAgente() {
+      const agente = document.getElementById('agente').value.trim();
+      if (!agente) {
+        alert('Digite o nome do agente.');
+        return;
+      }
+      agentes.push(agente);
+      atualizarListaAgentes();
+      document.getElementById('agente').value = '';
+    }
+
+    function removerAgente(index) {
+      agentes.splice(index, 1);
+      atualizarListaAgentes();
+    }
+
+    function atualizarListaAgentes() {
+      const lista = document.getElementById('listaAgentes');
+      lista.innerHTML = '';
+      agentes.forEach((nome, index) => {
+        const div = document.createElement('div');
+        div.className = 'item-entry';
+        div.innerHTML = `<span>${nome}</span><button onclick="removerAgente(${index})">X</button>`;
         lista.appendChild(div);
       });
     }
@@ -252,6 +288,13 @@
       itens.forEach(i => {
         mensagem += `> - **${i.item}** x${i.quantidade}\n`;
       });
+
+      if (agentes.length > 0) {
+        mensagem += `\n🚔 **Agentes na Viatura:**\n`;
+        agentes.forEach(nome => {
+          mensagem += `> - ${nome}\n`;
+        });
+      }
 
       const output = document.getElementById('output');
       output.innerText = mensagem;
