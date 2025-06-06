@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro de Apreensão</title>
+  <style>
+    body {
+      background: #070707;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      padding: 30px;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      min-height: 100vh;
+      margin: 0;
+      flex-wrap: wrap;
+    }
+
+    .form-container {
+      width: 380px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+      height: fit-content;
+      box-sizing: border-box;
+      margin-bottom: 30px;
+    }
+
+    .form-container h2 {
+      font-family: Georgia, serif;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #222;
+      user-select: none;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 6px;
+      font-size: 15px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      font-family: Verdana, sans-serif;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: #0077cc;
+      outline: none;
+    }
+
+    .item-list {
+      margin-top: 20px;
+    }
+
+    .item-entry {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .item-entry span {
+      flex: 1;
+      user-select: none;
+    }
+
+    .item-entry button {
+      background-color: #d9534f;
+      color: white;
+      width: 40px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    .item-entry button:hover {
+      background-color: #c9302c;
+    }
+
+    button.add-btn,
+    button.generate-btn,
+    #copiarBtn {
+      display: block;
+      margin-top: 15px;
+      padding: 12px 25px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      user-select: none;
+      width: 100%;
+    }
+    button.add-btn:hover,
+    button.generate-btn:hover,
+    #copiarBtn:hover {
+      background: #005fa3;
+    }
+
+    #output {
+      white-space: pre-wrap;
+      background: #e9ecef;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      min-height: 100px;
+      color: #111;
+      font-size: 15px;
+      font-family: Verdana, sans-serif;
+      user-select: text;
+      box-shadow: inset 0 0 5px rgb(0 0 0 / 0.1);
+    }
+
+    /* Mensagem temporária (toast) */
+    #toast {
+      visibility: hidden;
+      min-width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 12px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      font-size: 16px;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      user-select: none;
+    }
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Registro de Apreensão</h2>
+
+    <label for="nome">Nome do suspeito:</label>
+    <input type="text" id="nome" autocomplete="off" />
+
+    <label for="rg">RG do suspeito:</label>
+    <input type="text" id="rg" autocomplete="off" />
+
+    <label for="item">Selecionar item ilegal:</label>
+    <select id="item">
+      <option value="">-- Escolha um item --</option>
+      <option value="Pistola 9mm">Pistola 9mm</option>
+      <option value="Fuzil AK-47">Fuzil AK-47</option>
+      <option value="Droga (Cocaína)">Droga (Cocaína)</option>
+      <option value="Droga (Maconha)">Droga (Maconha)</option>
+      <option value="Carregador">Carregador</option>
+      <option value="Silenciador">Silenciador</option>
+    </select>
+
+    <label for="quantidade">Quantidade:</label>
+    <input type="number" id="quantidade" min="1" />
+
+    <button class="add-btn" onclick="adicionarItem()">Adicionar Item</button>
+
+    <div class="item-list" id="listaItens"></div>
+
+    <button class="generate-btn" onclick="gerarMensagem()">Gerar Mensagem</button>
+
+    <div id="output"></div>
+    <button id="copiarBtn" onclick="copiarMensagem()" style="display:none;">Copiar Mensagem</button>
+  </div>
+
+  <div id="toast">Mensagem copiada!</div>
+
+  <script>
+    const itens = [];
+
+    function adicionarItem() {
+      const item = document.getElementById('item').value;
+      const quantidade = document.getElementById('quantidade').value;
+      if (!item || !quantidade) {
+        alert('Selecione um item e defina a quantidade.');
+        return;
+      }
+
+      itens.push({ item, quantidade });
+      atualizarLista();
+
+      document.getElementById('item').value = '';
+      document.getElementById('quantidade').value = '';
+    }
+
+    function removerItem(index) {
+      itens.splice(index, 1);
+      atualizarLista();
+    }
+
+    function atualizarLista() {
+      const lista = document.getElementById('listaItens');
+      lista.innerHTML = '';
+      itens.forEach((entry, index) => {
+        const div = document.createElement('div');
+        div.className = 'item-entry';
+        div.innerHTML = `<span>${entry.item} x${entry.quantidade}</span><button onclick="removerItem(${index})">X</button>`;
+        lista.appendChild(div);
+      });
+    }
+
+    function gerarMensagem() {
+      const nome = document.getElementById('nome').value.trim();
+      const rg = document.getElementById('rg').value.trim();
+      if (!nome || !rg) {
+        alert('Preencha o nome e RG do suspeito.');
+        return;
+      }
+      if (itens.length === 0) {
+        alert('Adicione ao menos um item apreendido.');
+        return;
+      }
+
+      let mensagem = `# Registro de Apreensão\n`;
+      mensagem += `👤 **Nome:** ${nome}\n`;
+      mensagem += `🆔 **RG:** ${rg}\n\n`;
+      mensagem += `📦 **Itens Apreendidos:**\n`;
+      itens.forEach(i => {
+        mensagem += `> - **${i.item}** x${i.quantidade}\n`;
+      });
+
+      const output = document.getElementById('output');
+      output.innerText = mensagem;
+      document.getElementById('copiarBtn').style.display = 'block';
+    }
+
+    function copiarMensagem() {
+      const texto = document.getElementById('output').innerText;
+      if (!texto) {
+        alert('Não há mensagem para copiar.');
+        return;
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.value = texto;
+      document.body.appendChild(textarea);
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+
+      try {
+        const sucesso = document.execCommand('copy');
+        if (sucesso) {
+          mostrarToast();
+        } else {
+          alert('Erro ao copiar a mensagem.');
+        }
+      } catch (err) {
+        alert('Erro ao copiar a mensagem.');
+      }
+
+      document.body.removeChild(textarea);
+    }
+
+    function mostrarToast() {
+      const toast = document.getElementById('toast');
+      toast.className = 'show';
+      setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
